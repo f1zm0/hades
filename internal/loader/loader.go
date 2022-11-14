@@ -34,17 +34,17 @@ type Loader struct {
 	ntdllApi map[int64]InMemProc
 }
 
-func NewLoader() *Loader {
+func NewLoader() (*Loader, error) {
 	djb2 := hashing.NewDJB2()
 	pl := &Loader{djb2: djb2}
-	ntProcs, err := pl.ResolveSyscallIDs()
+	ntProcs, err := pl.resolveSyscallIDs()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	pl.ntdllApi = ntProcs
 
-	return pl
+	return pl, nil
 }
 
 func (pl *Loader) GetSysID(funcName string) int {
@@ -126,7 +126,7 @@ func (p *InMemProc) IsHooked() bool {
 	return false
 }
 
-func (pl *Loader) ResolveSyscallIDs() (map[int64]InMemProc, error) {
+func (pl *Loader) resolveSyscallIDs() (map[int64]InMemProc, error) {
 	procMap := make(map[int64]InMemProc)
 	var ntProcs []InMemProc
 

@@ -29,7 +29,10 @@ func main() {
 		0xd7,
 	}
 
-	ldr := loader.NewLoader()
+	ldr, err := loader.NewLoader()
+	if err != nil {
+		panic(err)
+	}
 
 	// if err := ldr.SelfInjectThread(calcSc); err !+ nil {
 	// 	fmt.Printf("An error occured:\n%s\n", err.Error())
