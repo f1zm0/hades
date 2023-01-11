@@ -20,18 +20,56 @@
 
 ## Disclaimer
 
-The techniques used in this project are not new. This project is merely a proof of concept, and has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
+The techniques used in this project are not new. This project is just a proof of concept, and has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
 
-Also, this project is not intended to be used to bypass any particular EDR or anti malware solution.
+## Usage
+
+The easiest way, is probably building the project on Linux using `make`.
+
+```sh
+git clone https://github.com/f1zm0/hades && make
+```
+
+Then you can bring the executable to a x64 Windows host and run it with `./hades` or `./hades -h` to see the available options.
+
+```
+PS > .\hades.exe -h
+
+  '||'  '||'     |     '||''|.   '||''''|   .|'''.|
+   ||    ||     |||     ||   ||   ||  .     ||..  '
+   ||''''||    |  ||    ||    ||  ||''|      ''|||.
+   ||    ||   .''''|.   ||    ||  ||       .     '||
+  .||.  .||. .|.  .||. .||...|'  .||.....| |'....|'
+
+          version: dev [11/01/23] :: @f1zm0
+
+Usage:
+  hades -f <filepath> [-t selfthread|remotethread|queueuserapc]
+
+Options:
+  -f, --file <str>        shellcode file path (.bin)
+  -t, --technique <str>   injection technique [selfthread, remotethread, queueuserapc]
+```
+
+For instance you can run the tool with:
+
+```
+.\hades.exe -f calc.bin -t queueuserapc
+```
+
+## Showcase
+
+Below is a very quick proof of concept of the tools, that is used to inject a simple calc shellcode with APC injection, while intercepting the call to `NtQueueApcThread` with [Frida](https://frida.re). The tool doesn't care about the hook and instead uses the RVAs of `Zw*` functions to calculate the SSN of `NtQueueApcThread` and make a direct system call.
+
+![NtQueueApcThread Frida interceptor](static/frida-poc.gif)
 
 ## Credits
 
 Big thanks to the following people that shared their knowledge and code that inspired this tool:
 
 - [@smelly\_\_vx](https://twitter.com/@RtlMateusz) and [@am0nsec](https://twitter.com/am0nsec) creators of [Hell's Gate](https://github.com/am0nsec/HellsGate)
-- [@modexp](https://twitter.com/modexpblog)'s blog post on [Bypassing User-Mode Hooks and syscall invocation in C](https://www.mdsec.co.uk/2020/12/bypassing-user-mode-hooks-and-direct-invocation-of-system-calls-for-red-teams/)
+- [@modexp](https://twitter.com/modexpblog)'s excellent blog post [Bypassing User-Mode Hooks and syscall invocation in C](https://www.mdsec.co.uk/2020/12/bypassing-user-mode-hooks-and-direct-invocation-of-system-calls-for-red-teams/)
 - [@ElephantSe4l](ElephantSe4l) creator of [FreshyCalls](https://github.com/crummie5/FreshyCalls)
-- [@thefLink](https://twitter.com/theflink_) creator of [RecycledGate](https://github.com/thefLink/RecycledGate)
 - [@C_Sto](https://twitter.com/C_Sto) creator of [BananaPhone](https://github.com/C-Sto/BananaPhone)
 
 ## License
