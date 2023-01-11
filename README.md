@@ -6,7 +6,7 @@
     <img alt="Made with Go" src="https://img.shields.io/badge/Made%20with%20Go-00ADD8?style=for-the-badge&logo=Go&logoColor=white" style="max-width: 100%;">
 </a>
 <a href="https://github.com/f1zm0/hades">
-    <img src="https://img.shields.io/github/license/f1zm0/hades?style=for-the-badge&color=aabbcc&logo=bookstack&logoColor=white&labelColor=2b2c35" alt="project license">
+    <img src="https://img.shields.io/github/license/f1zm0/hades?style=for-the-badge&color=aabbcc&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
 </a>
 <a href="https://github.com/f1zm0/hades/issues">
     <img alt="Issues" src="https://img.shields.io/github/issues/f1zm0/hades?style=for-the-badge&logo=dependabot&color=aabbcc&logoColor=d9e0ee&labelColor=2b2c33" style="max-width: 100%;">
