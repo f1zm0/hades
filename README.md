@@ -67,10 +67,10 @@ Below is a very quick proof of concept of the tools, that is used to inject a si
 
 Big thanks to the following people that shared their knowledge and code that inspired this tool:
 
-- [@smelly\_\_vx](https://twitter.com/@RtlMateusz) and [@am0nsec](https://twitter.com/am0nsec) creators of [Hell's Gate](https://github.com/am0nsec/HellsGate)
+- [@smelly\_\_vx](https://twitter.com/smelly_vx) and [@am0nsec](https://twitter.com/am0nsec) creators of [Hell's Gate](https://github.com/am0nsec/HellsGate)
 - [@modexp](https://twitter.com/modexpblog)'s excellent blog post [Bypassing User-Mode Hooks and syscall invocation in C](https://www.mdsec.co.uk/2020/12/bypassing-user-mode-hooks-and-direct-invocation-of-system-calls-for-red-teams/)
-- [@ElephantSe4l](ElephantSe4l) creator of [FreshyCalls](https://github.com/crummie5/FreshyCalls)
-- [@C_Sto](https://twitter.com/C_Sto) creator of [BananaPhone](https://github.com/C-Sto/BananaPhone)
+- [@ElephantSe4l](https://twitter.com/elephantse4l) creator of [FreshyCalls](https://github.com/crummie5/FreshyCalls)
+- [@C_Sto](https://twitter.com/c__sto) creator of [BananaPhone](https://github.com/C-Sto/BananaPhone)
 
 ## License
 
