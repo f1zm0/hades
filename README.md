@@ -27,7 +27,8 @@ The techniques used in this project are not new. This project is just a proof of
 The easiest way, is probably building the project on Linux using `make`.
 
 ```sh
-git clone https://github.com/f1zm0/hades && make
+git clone https://github.com/f1zm0/hades && cd hades
+make
 ```
 
 Then you can bring the executable to a x64 Windows host and run it with `./hades` or `./hades -h` to see the available options.
