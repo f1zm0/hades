@@ -11,14 +11,16 @@
 <a href="https://github.com/f1zm0/hades/issues">
     <img alt="Issues" src="https://img.shields.io/github/issues/f1zm0/hades?style=for-the-badge&logo=dependabot&color=aabbcc&logoColor=d9e0ee&labelColor=2b2c33" style="max-width: 100%;">
   </a>
-<a href="#"> <img src="https://img.shields.io/badge/Status-PoC-aabbcc?style=for-the-badge&labelColor=2b2c33&logo=curl" alt="project status"> </a>
+    <a href="https://twitter.com/intent/follow?screen_name=f1zm0">
+      <img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/f1zm0?style=for-the-badge&logo=twitter&color=8aadf3&logoColor=d9e0ee&labelColor=2b2c33" />
+    </a>
 </p>
 
 ## About
 
 `hades` is a proof of concept loader that combines SSN sorting and direct syscall invocation to bypass user-mode hooks in Go and Go-ASM. Needed functions are resolved by walking the PEB and using their djb2 hash, without calling other native APIs.
 
-> **Info**
+> **Note** <br/>
 > The techniques used in this project are not new. This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
 > Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by this tool.
 
