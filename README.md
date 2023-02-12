@@ -14,13 +14,13 @@
 <a href="#"> <img src="https://img.shields.io/badge/Status-PoC-aabbcc?style=for-the-badge&labelColor=2b2c33&logo=curl" alt="project status"> </a>
 </p>
 
-<p align="center">
-  <i>SSN sorting and direct syscall invocation for AV/EDR evasion in Go and Go ASM</i>
-</p>
+## About
 
-## Disclaimer
+`hades` is a proof of concept loader that combines SSN sorting and direct syscall invocation to bypass user-mode hooks in Go and Go-ASM. Needed functions are resolved by walking the PEB and using their djb2 hash, without calling other native APIs.
 
-The techniques used in this project are not new. This project is just a proof of concept, and has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
+> **Info**
+> The techniques used in this project are not new. This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
+> Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by this tool.
 
 ## Usage
 
@@ -52,7 +52,9 @@ Options:
   -t, --technique <str>   injection technique [selfthread, remotethread, queueuserapc]
 ```
 
-For instance you can run the tool with:
+### Example:
+
+Inject shellcode that spawms `calc.exe` with [queueuserapc](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-queueuserapc) technique:
 
 ```
 .\hades.exe -f calc.bin -t queueuserapc
@@ -60,7 +62,7 @@ For instance you can run the tool with:
 
 ## Showcase
 
-Below is a very quick proof of concept of the tools, that is used to inject a simple calc shellcode with APC injection, while intercepting the call to `NtQueueApcThread` with [Frida](https://frida.re). The tool doesn't care about the hook and instead uses the RVAs of `Zw*` functions to calculate the SSN of `NtQueueApcThread` and make a direct system call.
+Below is a very quick proof of concept of the tools, that is used to inject a simple calc shellcode with APC injection, while intercepting the call to `NtQueueApcThread` with [Frida](https://frida.re). The loader doesn't care about the hook and instead uses the RVAs of `Zw*` functions to calculate the SSN of `NtQueueApcThread` and make a direct system call.
 
 ![NtQueueApcThread Frida interceptor](static/frida-poc.gif)
 
