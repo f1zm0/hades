@@ -18,7 +18,7 @@
 
 ## About
 
-`hades` is a proof of concept loader that combines SSN sorting and direct syscall invocation to bypass user-mode hooks in Go and Go-ASM. Needed functions are resolved by walking the PEB and using their djb2 hash, without calling other native APIs.
+`hades` is a proof of concept loader that combines SSN sorting and direct syscall invocation to bypass user-mode hooks in Go and Go-ASM. Needed functions are resolved by walking the PEB and using their djb2 hash.
 
 > **Note** <br/>
 > The techniques used in this project are not new. This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
