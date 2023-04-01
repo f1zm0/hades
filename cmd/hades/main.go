@@ -120,18 +120,7 @@ func main() {
 	fmt.Println("Press enter to continue...")
 	_, _ = fmt.Scanln()
 
-	switch opts.injectionTechnique {
-	case "selfthread":
-		if err := ldr.SelfInjectThread(buf); err != nil {
-			fmt.Printf("An error occured:\n%s\n", err.Error())
-		}
-	case "remotethread":
-		if err := ldr.RemoteThreadInject(buf); err != nil {
-			fmt.Printf("An error occured:\n%s\n", err.Error())
-		}
-	default:
-		if err := ldr.QueueUserAPC(buf); err != nil {
-			fmt.Printf("An error occured:\n%s\n", err.Error())
-		}
+	if err := ldr.Load(buf, opts.injectionTechnique); err != nil {
+		fmt.Printf("An error occured:\n%s\n", err.Error())
 	}
 }
