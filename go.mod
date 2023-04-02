@@ -1,6 +1,6 @@
 module github.com/f1zm0/hades
 
-go 1.17
+go 1.20
 
 require (
 	github.com/Binject/debug v0.0.0-20211007083345-9605c99179ee
