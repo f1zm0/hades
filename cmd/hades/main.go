@@ -15,16 +15,8 @@ import (
 )
 
 var (
-	// version
-	version = "dev"
-
-	// date (build date).
-	date = time.Now().Format("02/01/06")
-
-	// author.
-	author = "@f1zm0"
-
-	// supported injection techniques
+	version    = "dev"
+	date       = time.Now().Format("02/01/06")
 	techniques = []string{
 		"selfthread",
 		"remotethread",
@@ -40,8 +32,8 @@ func getBanner() string {
    ||    ||   .''''|.   ||    ||  ||       .     '|| 
   .||.  .||. .|.  .||. .||...|'  .||.....| |'....|' 
 
-          version: %s [%s] :: %s
-`, version, date, author)
+          version: %s [%s] :: @f1zm0
+`, version, date)
 }
 
 type options struct {
@@ -116,7 +108,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// wait for user to click enter to continue
 	fmt.Println("Press enter to continue...")
 	_, _ = fmt.Scanln()
 
