@@ -27,11 +27,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	djb2 := hashing.NewDJB2()
-
 	fmt.Printf("\n")
 	for _, s := range flag.Args() {
-		fmt.Printf("%s => %d\n", s, djb2.HashString(s))
+		fmt.Printf("%s => %d\n", s, hashing.XORHash([]byte(s)))
 	}
-
 }
