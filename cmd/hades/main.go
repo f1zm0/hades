@@ -54,7 +54,6 @@ func parseCLIFlags() options {
 			"Examples",
 			"hades -f shellcode.bin -t selfthread",
 		}
-
 		fmt.Fprint(os.Stderr, strings.Join(helpMsg, "\n"))
 	}
 
@@ -91,6 +90,7 @@ func main() {
 	}
 
 	// check if injection technique is supported by checking if the user-provided name is in techniques slice
+	opts.injectionTechnique = strings.ToLower(opts.injectionTechnique)
 	if !contains(techniques, opts.injectionTechnique) {
 		fmt.Println("[-] injection technique not supported")
 		os.Exit(1)
