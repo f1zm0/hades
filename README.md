@@ -1,11 +1,11 @@
 <p align="center">
-    <img src="static/hades-banner.png" title="hades banner" width="70%"/>
+    <img src=".github/img/hades-banner.png" title="hades banner" width="65%"/>
 </p>
 <p align="center">
   <a href="https://github.com/f1zm0/hades/releases">
     <img alt="Made with Go" src="https://img.shields.io/badge/Made%20with%20Go-00ADD8?logo=Go&logoColor=white" style="max-width: 100%;">
 </a>
-    <a href="https://github.com/f1zm0/hades/releases"><img alt="latest release version" src="https://img.shields.io/github/v/release/f1zm0/hades?color=aabbcc&logo=github&logoColor=white&labelColor=2b2c33"></a>
+    <!-- <a href="https://github.com/f1zm0/hades/releases"><img alt="latest release version" src="https://img.shields.io/github/v/release/f1zm0/hades?color=aabbcc&logo=github&logoColor=white&labelColor=2b2c33"></a> -->
 <a href="https://github.com/f1zm0/hades">
     <img src="https://img.shields.io/github/license/f1zm0/hades?color=aabbcc&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
 </a>
@@ -17,7 +17,7 @@
 
 ## About
 
-`hades` is a proof of concept loader that combines SSN sorting and indirect syscall invocation to bypass user-mode hooks and instrumentation callbacks, written in Go and Go assembly.
+`hades` is a Go proof of concept loader that combines several evasion technques with the aim of bypassing some of the defensive mechanisms commonly used by EDRs and AVs.
 
 ## Usage
 
@@ -59,24 +59,38 @@ Inject shellcode that spawms `calc.exe` with [queueuserapc](https://docs.microso
 
 ## Showcase
 
-Below is a very quick proof of concept of the tools, that is used to inject a simple calc shellcode with APC injection, while intercepting the call to `NtQueueApcThread` with [Frida](https://frida.re). The loader doesn't care about the hook and instead uses the RVAs of `Zw*` functions to calculate the SSN of `NtQueueApcThread` and make a direct system call.
+User-mode hooking bypass with syscall RVA sorting - `NtQueueApcThread` hooked with [Frida](https://frida.re)
 
-![NtQueueApcThread Frida interceptor](static/frida-poc.gif)
+![NtQueueApcThread Frida interceptor](.github/img/frida-poc.gif)
+
+Instrumentation callback bypass with indirect syscalls (injected DLL is from [syscall-detect](https://github.com/jackullrich/syscall-detect) by [jackullrich](https://twitter.com/winternl))
+
+![syscall-detect bypass](.github/img/syscall-detect-poc.gif)
+
+## Additional Notes
+
+### Direct syscall version
+
+In the latest release, direct syscall capabilities have been replaced by indirect syscalls provided by [acheron](https://github.com/f1zm0/acheron). If for some reason you want to use the previous version of the loader that used direct syscalls, you need to explicitly pass the `direct-syscall` tag to the compiler, which will figure out what files needs to be included and excluded from the build.
+
+```sh
+GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags='direct_syscalls' -o dist/hades_directsys.exe cmd/hades/main.go
+```
+
+### Disclaimers
+
+> **Info**
+> This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
+> Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by the improper use of this tool.
 
 ## Credits
 
-Big thanks to the following people that shared their knowledge and code that inspired this tool:
+Shoutout to the following people that shared their knowledge and code that inspired this tool:
 
 - [@smelly\_\_vx](https://twitter.com/smelly_vx) and [@am0nsec](https://twitter.com/am0nsec) creators of [Hell's Gate](https://github.com/am0nsec/HellsGate)
 - [@modexp](https://twitter.com/modexpblog)'s excellent blog post [Bypassing User-Mode Hooks and syscall invocation in C](https://www.mdsec.co.uk/2020/12/bypassing-user-mode-hooks-and-direct-invocation-of-system-calls-for-red-teams/)
 - [@ElephantSe4l](https://twitter.com/elephantse4l) creator of [FreshyCalls](https://github.com/crummie5/FreshyCalls)
 - [@C_Sto](https://twitter.com/c__sto) creator of [BananaPhone](https://github.com/C-Sto/BananaPhone)
-
-## Disclaimers
-
-> **Info**
-> This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
-> Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by the improper use of this tool.
 
 ## License
 
