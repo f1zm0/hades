@@ -1,26 +1,23 @@
 <p align="center">
-    <img src="static/hades-banner.png" title="hades banner" width="80%"/>
+    <img src="static/hades-banner.png" title="hades banner" width="70%"/>
 </p>
 <p align="center">
   <a href="https://github.com/f1zm0/hades/releases">
-    <img alt="Made with Go" src="https://img.shields.io/badge/Made%20with%20Go-00ADD8?style=for-the-badge&logo=Go&logoColor=white" style="max-width: 100%;">
+    <img alt="Made with Go" src="https://img.shields.io/badge/Made%20with%20Go-00ADD8?logo=Go&logoColor=white" style="max-width: 100%;">
 </a>
+    <a href="https://github.com/f1zm0/hades/releases"><img alt="latest release version" src="https://img.shields.io/github/v/release/f1zm0/hades?color=aabbcc&logo=github&logoColor=white&labelColor=2b2c33"></a>
 <a href="https://github.com/f1zm0/hades">
-    <img src="https://img.shields.io/github/license/f1zm0/hades?style=for-the-badge&color=aabbcc&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
+    <img src="https://img.shields.io/github/license/f1zm0/hades?color=aabbcc&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
 </a>
 <a href="https://github.com/f1zm0/hades/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/f1zm0/hades?style=for-the-badge&logo=dependabot&color=aabbcc&logoColor=d9e0ee&labelColor=2b2c33" style="max-width: 100%;">
+    <img alt="Issues" src="https://img.shields.io/github/issues/f1zm0/hades?logo=dependabot&color=aabbcc&logoColor=d9e0ee&labelColor=2b2c33" style="max-width: 100%;">
   </a>
-<a href="#"> <img src="https://img.shields.io/badge/Status-PoC-aabbcc?style=for-the-badge&labelColor=2b2c33&logo=curl" alt="project status"> </a>
+<a href="#"> <img src="https://img.shields.io/badge/Status-PoC-aabbcc?labelColor=2b2c33&logo=curl" alt="project status"> </a>
 </p>
 
 ## About
 
-`hades` is a proof of concept loader that combines SSN sorting and direct syscall invocation to bypass user-mode hooks in Go and Go-ASM. Needed functions are resolved by walking the PEB and using their djb2 hash, without calling other native APIs.
-
-> **Info**
-> The techniques used in this project are not new. This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
-> Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by this tool.
+`hades` is a proof of concept loader that combines SSN sorting and indirect syscall invocation to bypass user-mode hooks and instrumentation callbacks, written in Go and Go assembly.
 
 ## Usage
 
@@ -31,7 +28,7 @@ git clone https://github.com/f1zm0/hades && cd hades
 make
 ```
 
-Then you can bring the executable to a x64 Windows host and run it with `./hades` or `./hades -h` to see the available options.
+Then you can bring the executable to a x64 Windows host and run it with `.\hades.exe [options]`.
 
 ```
 PS > .\hades.exe -h
@@ -74,6 +71,12 @@ Big thanks to the following people that shared their knowledge and code that ins
 - [@modexp](https://twitter.com/modexpblog)'s excellent blog post [Bypassing User-Mode Hooks and syscall invocation in C](https://www.mdsec.co.uk/2020/12/bypassing-user-mode-hooks-and-direct-invocation-of-system-calls-for-red-teams/)
 - [@ElephantSe4l](https://twitter.com/elephantse4l) creator of [FreshyCalls](https://github.com/crummie5/FreshyCalls)
 - [@C_Sto](https://twitter.com/c__sto) creator of [BananaPhone](https://github.com/C-Sto/BananaPhone)
+
+## Disclaimers
+
+> **Info**
+> This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
+> Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by the improper use of this tool.
 
 ## License
 
