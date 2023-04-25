@@ -17,8 +17,8 @@
 
 ## About
 
-`hades` is a Go proof of concept loader that combines several evasion technques with the aim of bypassing some of the defensive mechanisms commonly used by EDRs and AVs.
-
+**Hades** is a proof of concept loader that combines several evasion technques with the aim of bypassing the defensive mechanisms commonly used by modern AV/EDRs.
+    
 ## Usage
 
 The easiest way, is probably building the project on Linux using `make`.
@@ -63,7 +63,7 @@ User-mode hooking bypass with syscall RVA sorting  (`NtQueueApcThread` hooked wi
 
 ![NtQueueApcThread Frida interceptor](.github/images/frida-poc.gif)
 
-Instrumentation callback bypass with indirect syscalls (injected DLL is from [syscall-detect](https://github.com/jackullrich/syscall-detect) by [jackullrich](https://twitter.com/winternl))
+Instrumentation callback bypass with indirect syscalls (injected DLL is from [syscall-detect](https://github.com/jackullrich/syscall-detect) by [jackullrich](https://twitter.com/winternl_t))
 
 ![syscall-detect bypass](.github/images/syscall-detect-poc.gif)
 
@@ -91,6 +91,7 @@ Shoutout to the following people that shared their knowledge and code that inspi
 - [@modexp](https://twitter.com/modexpblog)'s excellent blog post [Bypassing User-Mode Hooks and syscall invocation in C](https://www.mdsec.co.uk/2020/12/bypassing-user-mode-hooks-and-direct-invocation-of-system-calls-for-red-teams/)
 - [@ElephantSe4l](https://twitter.com/elephantse4l) creator of [FreshyCalls](https://github.com/crummie5/FreshyCalls)
 - [@C_Sto](https://twitter.com/c__sto) creator of [BananaPhone](https://github.com/C-Sto/BananaPhone)
+- [@winternl](https://twitter.com/winternl_t) for [this blog post](https://winternl.com/detecting-manual-syscalls-from-user-mode/) on Hooking Nirvana and instrumentation callback to detect suspicious syscalls from user-mode.
 
 ## License
 
