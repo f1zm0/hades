@@ -1,14 +1,17 @@
-#define maxargs 16
-TEXT ·execSyscall(SB), $0-56
-	XORQ    AX,AX
+//go:build direct_syscalls
 
-	MOVW    callid+0(FP), AX
+#define maxargs 16
+
+// func execDirectSyscall(callID uint16, argh ...uintptr) (errcode uint32)
+TEXT ·execDirectSyscall(SB), $0-56
+    XORQ    AX, AX
+    MOVW    ssn+0(FP), AX
+    PUSHQ   CX
 
 	//put variadic pointer into SI
 	MOVQ    argh_base+8(FP),SI
 
 	//put variadic size into CX
-	PUSHQ   CX
 	MOVQ    argh_len+16(FP),CX
 
 	// SetLastError(0).
@@ -28,8 +31,11 @@ TEXT ·execSyscall(SB), $0-56
 	// Copy args to the stack.
 	MOVQ	SP, DI
 	CLD
-	REP
+	REP; MOVSQ
 	MOVQ	SP, SI
+
+	//move the stack pointer????? why????
+	SUBQ	$8, SP
 
 loadregs:
 	// Load first 4 args into correspondent registers.
@@ -48,10 +54,12 @@ loadregs:
 	MOVQ	R9, X3
 
 	MOVQ    CX, R10
+
+    // direct syscall
 	SYSCALL
+
 	ADDQ	$((maxargs+1)*8), SP
 
-	// Return result.
 	POPQ	CX
 	MOVL	AX, errcode+32(FP)
 	RET
