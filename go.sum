@@ -1,2 +1,4 @@
+github.com/f1zm0/acheron v1.0.0 h1:TuKoCH6/ei6++FYKDxfU3u/7HfEbGML2e8XU96FXPxY=
+github.com/f1zm0/acheron v1.0.0/go.mod h1:AoZubNHFFrqHu7cV+DJYG4GUg+Z6yMkzI34o9p0cPKs=
 golang.org/x/sys v0.7.0 h1:3jlCCIQZPdOYu1h8BkNvLz8Kgwtae2cagcG/VamtZRU=
 golang.org/x/sys v0.7.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
