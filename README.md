@@ -1,18 +1,18 @@
 <p align="center">
-    <img src=".github/img/hades-banner.png" title="hades banner" width="65%"/>
+    <img src=".github/images/hades-banner.png" title="hades banner" width="65%"/>
 </p>
 <p align="center">
   <a href="https://github.com/f1zm0/hades/releases">
     <img alt="Made with Go" src="https://img.shields.io/badge/Made%20with%20Go-00ADD8?logo=Go&logoColor=white" style="max-width: 100%;">
 </a>
-    <!-- <a href="https://github.com/f1zm0/hades/releases"><img alt="latest release version" src="https://img.shields.io/github/v/release/f1zm0/hades?color=aabbcc&logo=github&logoColor=white&labelColor=2b2c33"></a> -->
+<a href="https://pkg.go.dev/github.com/f1zm0/hades"><img src="https://pkg.go.dev/badge/github.com/f1zm0/hades.svg" alt="Go Reference"></a>
+    <!-- <a href="https://github.com/f1zm0/hades/releases"><img alt="latest release version" src="https://img.shields.io/github/v/release/f1zm0/hades?color=007d9c&logo=github&logoColor=white&labelColor=2b2c33"></a> -->
 <a href="https://github.com/f1zm0/hades">
-    <img src="https://img.shields.io/github/license/f1zm0/hades?color=aabbcc&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
+    <img src="https://img.shields.io/github/license/f1zm0/hades?color=007d9c&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
 </a>
-<a href="https://github.com/f1zm0/hades/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/f1zm0/hades?logo=dependabot&color=aabbcc&logoColor=d9e0ee&labelColor=2b2c33" style="max-width: 100%;">
   </a>
-<a href="#"> <img src="https://img.shields.io/badge/Status-PoC-aabbcc?labelColor=2b2c33&logo=curl" alt="project status"> </a>
+<a href="#"> <img src="https://img.shields.io/badge/Status-PoC-007d9c?labelColor=2b2c33&logo=curl" alt="project status"> </a>
+    <a href="https://twitter.com/f1zm0" target="_blank"><img alt="Twitter Follow" src="https://img.shields.io/badge/Twitter-00acee?logo=twitter&logoColor=white"></a>
 </p>
 
 ## About
@@ -59,13 +59,13 @@ Inject shellcode that spawms `calc.exe` with [queueuserapc](https://docs.microso
 
 ## Showcase
 
-User-mode hooking bypass with syscall RVA sorting - `NtQueueApcThread` hooked with [Frida](https://frida.re)
+User-mode hooking bypass with syscall RVA sorting  (`NtQueueApcThread` hooked with [frida-trace](https://frida.re) and [custom handler](scripts/NtQueueApcThread.js))
 
-![NtQueueApcThread Frida interceptor](.github/img/frida-poc.gif)
+![NtQueueApcThread Frida interceptor](.github/images/frida-poc.gif)
 
 Instrumentation callback bypass with indirect syscalls (injected DLL is from [syscall-detect](https://github.com/jackullrich/syscall-detect) by [jackullrich](https://twitter.com/winternl))
 
-![syscall-detect bypass](.github/img/syscall-detect-poc.gif)
+![syscall-detect bypass](.github/images/syscall-detect-poc.gif)
 
 ## Additional Notes
 
@@ -79,7 +79,7 @@ GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags='direct_syscalls' -o d
 
 ### Disclaimers
 
-> **Info**
+> **Warning**  </br>
 > This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
 > Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by the improper use of this tool.
 
