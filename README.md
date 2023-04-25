@@ -1,28 +1,23 @@
 <p align="center">
-    <img src="static/hades-banner.png" title="hades banner" width="80%"/>
+    <img src=".github/images/hades-banner.png" title="hades banner" width="65%"/>
 </p>
 <p align="center">
   <a href="https://github.com/f1zm0/hades/releases">
-    <img alt="Made with Go" src="https://img.shields.io/badge/Made%20with%20Go-00ADD8?style=for-the-badge&logo=Go&logoColor=white" style="max-width: 100%;">
+    <img alt="Made with Go" src="https://img.shields.io/badge/Made%20with%20Go-00ADD8?logo=Go&logoColor=white" style="max-width: 100%;">
 </a>
+<a href="https://pkg.go.dev/github.com/f1zm0/hades"><img src="https://pkg.go.dev/badge/github.com/f1zm0/hades.svg" alt="Go Reference"></a>
+    <!-- <a href="https://github.com/f1zm0/hades/releases"><img alt="latest release version" src="https://img.shields.io/github/v/release/f1zm0/hades?color=007d9c&logo=github&logoColor=white&labelColor=2b2c33"></a> -->
 <a href="https://github.com/f1zm0/hades">
-    <img src="https://img.shields.io/github/license/f1zm0/hades?style=for-the-badge&color=aabbcc&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
+    <img src="https://img.shields.io/github/license/f1zm0/hades?color=007d9c&logo=bookstack&logoColor=white&labelColor=2b2c33" alt="project license">
 </a>
-<a href="https://github.com/f1zm0/hades/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/f1zm0/hades?style=for-the-badge&logo=dependabot&color=aabbcc&logoColor=d9e0ee&labelColor=2b2c33" style="max-width: 100%;">
   </a>
-    <a href="https://twitter.com/intent/follow?screen_name=f1zm0">
-      <img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/f1zm0?style=for-the-badge&logo=twitter&color=8aadf3&logoColor=d9e0ee&labelColor=2b2c33" />
-    </a>
+<a href="#"> <img src="https://img.shields.io/badge/Status-PoC-007d9c?labelColor=2b2c33&logo=curl" alt="project status"> </a>
+    <a href="https://twitter.com/f1zm0" target="_blank"><img alt="Twitter Follow" src="https://img.shields.io/badge/Twitter-00acee?logo=twitter&logoColor=white"></a>
 </p>
 
 ## About
 
-`hades` is a proof of concept loader that combines SSN sorting and direct syscall invocation to bypass user-mode hooks in Go and Go-ASM. Needed functions are resolved by walking the PEB and using their djb2 hash.
-
-> **Note** <br/>
-> The techniques used in this project are not new. This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
-> Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by this tool.
+**Hades** is a proof of concept loader that combines several evasion technques with the aim of bypassing the defensive mechanisms commonly used by modern AV/EDRs.
 
 ## Usage
 
@@ -33,7 +28,7 @@ git clone https://github.com/f1zm0/hades && cd hades
 make
 ```
 
-Then you can bring the executable to a x64 Windows host and run it with `./hades` or `./hades -h` to see the available options.
+Then you can bring the executable to a x64 Windows host and run it with `.\hades.exe [options]`.
 
 ```
 PS > .\hades.exe -h
@@ -64,18 +59,39 @@ Inject shellcode that spawms `calc.exe` with [queueuserapc](https://docs.microso
 
 ## Showcase
 
-Below is a very quick proof of concept of the tools, that is used to inject a simple calc shellcode with APC injection, while intercepting the call to `NtQueueApcThread` with [Frida](https://frida.re). The loader doesn't care about the hook and instead uses the RVAs of `Zw*` functions to calculate the SSN of `NtQueueApcThread` and make a direct system call.
+User-mode hooking bypass with syscall RVA sorting  (`NtQueueApcThread` hooked with [frida-trace](https://frida.re) and [custom handler](scripts/NtQueueApcThread.js))
 
-![NtQueueApcThread Frida interceptor](static/frida-poc.gif)
+![NtQueueApcThread Frida interceptor](.github/images/frida-poc.gif)
+
+Instrumentation callback bypass with indirect syscalls (injected DLL is from [syscall-detect](https://github.com/jackullrich/syscall-detect) by [jackullrich](https://twitter.com/winternl_t))
+
+![syscall-detect bypass](.github/images/syscall-detect-poc.gif)
+
+## Additional Notes
+
+### Direct syscall version
+
+In the latest release, direct syscall capabilities have been replaced by indirect syscalls provided by [acheron](https://github.com/f1zm0/acheron). If for some reason you want to use the previous version of the loader that used direct syscalls, you need to explicitly pass the `direct-syscall` tag to the compiler, which will figure out what files needs to be included and excluded from the build.
+
+```sh
+GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags='direct_syscalls' -o dist/hades_directsys.exe cmd/hades/main.go
+```
+
+### Disclaimers
+
+> **Warning**  </br>
+> This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
+> Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by the improper use of this tool.
 
 ## Credits
 
-Big thanks to the following people that shared their knowledge and code that inspired this tool:
+Shoutout to the following people that shared their knowledge and code that inspired this tool:
 
 - [@smelly\_\_vx](https://twitter.com/smelly_vx) and [@am0nsec](https://twitter.com/am0nsec) creators of [Hell's Gate](https://github.com/am0nsec/HellsGate)
 - [@modexp](https://twitter.com/modexpblog)'s excellent blog post [Bypassing User-Mode Hooks and syscall invocation in C](https://www.mdsec.co.uk/2020/12/bypassing-user-mode-hooks-and-direct-invocation-of-system-calls-for-red-teams/)
 - [@ElephantSe4l](https://twitter.com/elephantse4l) creator of [FreshyCalls](https://github.com/crummie5/FreshyCalls)
 - [@C_Sto](https://twitter.com/c__sto) creator of [BananaPhone](https://github.com/C-Sto/BananaPhone)
+- [@winternl](https://twitter.com/winternl_t) for [this blog post](https://winternl.com/detecting-manual-syscalls-from-user-mode/) on Hooking Nirvana and instrumentation callback to detect suspicious syscalls from user-mode.
 
 ## License
 

@@ -15,16 +15,8 @@ import (
 )
 
 var (
-	// version
-	version = "dev"
-
-	// date (build date).
-	date = time.Now().Format("02/01/06")
-
-	// author.
-	author = "@f1zm0"
-
-	// supported injection techniques
+	version    = "dev"
+	date       = time.Now().Format("02/01/06")
 	techniques = []string{
 		"selfthread",
 		"remotethread",
@@ -40,8 +32,8 @@ func getBanner() string {
    ||    ||   .''''|.   ||    ||  ||       .     '|| 
   .||.  .||. .|.  .||. .||...|'  .||.....| |'....|' 
 
-          version: %s [%s] :: %s
-`, version, date, author)
+          version: %s [%s] :: @f1zm0
+`, version, date)
 }
 
 type options struct {
@@ -62,7 +54,6 @@ func parseCLIFlags() options {
 			"Examples",
 			"hades -f shellcode.bin -t selfthread",
 		}
-
 		fmt.Fprint(os.Stderr, strings.Join(helpMsg, "\n"))
 	}
 
@@ -99,6 +90,7 @@ func main() {
 	}
 
 	// check if injection technique is supported by checking if the user-provided name is in techniques slice
+	opts.injectionTechnique = strings.ToLower(opts.injectionTechnique)
 	if !contains(techniques, opts.injectionTechnique) {
 		fmt.Println("[-] injection technique not supported")
 		os.Exit(1)
@@ -116,22 +108,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	// wait for user to click enter to continue
 	fmt.Println("Press enter to continue...")
 	_, _ = fmt.Scanln()
 
-	switch opts.injectionTechnique {
-	case "selfthread":
-		if err := ldr.SelfInjectThread(buf); err != nil {
-			fmt.Printf("An error occured:\n%s\n", err.Error())
-		}
-	case "remotethread":
-		if err := ldr.RemoteThreadInject(buf); err != nil {
-			fmt.Printf("An error occured:\n%s\n", err.Error())
-		}
-	default:
-		if err := ldr.QueueUserAPC(buf); err != nil {
-			fmt.Printf("An error occured:\n%s\n", err.Error())
-		}
+	if err := ldr.Load(buf, opts.injectionTechnique); err != nil {
+		fmt.Printf("An error occured:\n%s\n", err.Error())
 	}
 }
