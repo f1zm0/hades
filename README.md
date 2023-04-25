@@ -18,7 +18,7 @@
 ## About
 
 **Hades** is a proof of concept loader that combines several evasion technques with the aim of bypassing the defensive mechanisms commonly used by modern AV/EDRs.
-    
+
 ## Usage
 
 The easiest way, is probably building the project on Linux using `make`.
