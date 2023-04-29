@@ -59,7 +59,7 @@ Inject shellcode that spawms `calc.exe` with [queueuserapc](https://docs.microso
 
 ## Showcase
 
-User-mode hooking bypass with syscall RVA sorting  (`NtQueueApcThread` hooked with [frida-trace](https://frida.re) and [custom handler](scripts/NtQueueApcThread.js))
+User-mode hooking bypass with syscall RVA sorting (`NtQueueApcThread` hooked with [frida-trace](https://frida.re) and [custom handler](scripts/NtQueueApcThread.js))
 
 ![NtQueueApcThread Frida interceptor](.github/images/frida-poc.gif)
 
@@ -71,7 +71,7 @@ Instrumentation callback bypass with indirect syscalls (injected DLL is from [sy
 
 ### Direct syscall version
 
-In the latest release, direct syscall capabilities have been replaced by indirect syscalls provided by [acheron](https://github.com/f1zm0/acheron). If for some reason you want to use the previous version of the loader that used direct syscalls, you need to explicitly pass the `direct-syscall` tag to the compiler, which will figure out what files needs to be included and excluded from the build.
+In the latest release, direct syscall capabilities have been replaced by indirect syscalls provided by [acheron](https://github.com/f1zm0/acheron). If for some reason you want to use the previous version of the loader that used direct syscalls, you need to explicitly pass the `direct_syscalls` tag to the compiler, which will figure out what files needs to be included and excluded from the build.
 
 ```sh
 GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags='direct_syscalls' -o dist/hades_directsys.exe cmd/hades/main.go
@@ -79,7 +79,7 @@ GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags='direct_syscalls' -o d
 
 ### Disclaimers
 
-> **Warning**  </br>
+> **Warning** </br>
 > This project has been created for educational purposes only, to experiment with malware dev in Go, and learn more about the [unsafe](https://pkg.go.dev/unsafe) package and the weird [Go Assembly](https://go.dev/doc/asm) syntax.
 > Don't use it to on systems you don't own. The developer of this project is not responsible for any damage caused by the improper use of this tool.
 
